@@ -1,0 +1,20 @@
+{
+  "name": "net.emullen.menucontroller",
+  "version": "1.0.0",
+  "displayName": "Menu Controller",
+  "description": "Harness unity's ui better",
+  "unity": "2021.3",
+  "unityRelease": "17f1",
+  "documentationUrl": "https://example.com/",
+  "changelogUrl": "https://example.com/changelog.html",
+  "licensesUrl": "https://example.com/licensing.html",
+  "dependencies": {
+    "net.emullen.menucontroller": "file:"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Ethan Mullen",
+    "email": "mullen.ethan@yahoo.com",
+    "url": "https://www.emullen.net"
+  }
+}

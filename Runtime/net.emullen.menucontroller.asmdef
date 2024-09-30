@@ -1,0 +1,24 @@
+{
+    "name": "MenuController",
+    "rootNamespace": "EMullen.MenuController",
+    "references": [
+        "UnityEditor",
+        "UnityEditor.Build",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "Samples",
+        "FishNet.Runtime",
+        "PlayerMgmt",
+        "Core"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
