@@ -6,7 +6,6 @@
         "UnityEditor.Build",
         "Unity.InputSystem",
         "Unity.TextMeshPro",
-        "Samples",
         "FishNet.Runtime",
         "PlayerMgmt",
         "Core"
