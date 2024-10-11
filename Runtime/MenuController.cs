@@ -16,8 +16,17 @@ namespace EMullen.MenuController
     public abstract class MenuController : MonoBehaviour
     {
 
-        [SerializeField]
-        private BLogChannel logSettings;
+        private static BLogChannel logSettings;
+        public static BLogChannel LogSettings { get {
+            if(logSettings != null) {
+                logSettings = ScriptableObject.CreateInstance<BLogChannel>();
+                logSettings.color = new Color(0.125f, 0.5f, 0.777f);
+                logSettings.enable = true;
+                logSettings.verbosity = 5;
+                logSettings.logName = "MenuCont";
+            }
+            return logSettings;
+        } }
 
         [SerializeField]
         protected OpenCloseType openCloseType;
@@ -35,8 +44,11 @@ namespace EMullen.MenuController
             } else if(parentMenu != null) {
                 usedISUIM = "On parent->" + parentMenu.usedISUIM;
                 return parentMenu.InputSystemUIInputModule;
-            } else {
-                Debug.LogError("Couldn't assing an InputSystemUIInputModule");
+            } else if(MenuControllerSettings.Instance != null) {
+                usedISUIM = "On settings instance";
+                return MenuControllerSettings.Instance.InputSystemUIInputModule;
+            } else  {
+                Debug.LogError("Couldn't assingn an InputSystemUIInputModule");
                 return null;
             }
         } }
@@ -53,6 +65,8 @@ namespace EMullen.MenuController
                 return eventSystem;
             else if(parentMenu != null) {
                 return parentMenu.EventSystem;
+            } else if(MenuControllerSettings.Instance != null) {
+                return MenuControllerSettings.Instance.EventSystem;
             } else {
                 Debug.LogError("Failed to get EventSystem");
                 return null;
@@ -93,9 +107,13 @@ namespace EMullen.MenuController
 
         protected void Awake() 
         {
-
             if(openCloseType == OpenCloseType.CANVAS_GROUP && !TryGetComponent(out canvasGroup))
                 canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+            if(TryGetComponent(out Canvas canvas) && !canvas.enabled) {
+                canvas.enabled = true;
+                Close();
+            }
 
             InitializeSubMenus();
 
@@ -144,14 +162,14 @@ namespace EMullen.MenuController
             /* Passing focus */
             if(focusedPlayer != null) {
                 if(focusedPlayer.UID == playerObj.UID) {
-                    BLog.Log($"{this}: Maintaining focus on {playerObj.Input.playerIndex}", logSettings, 4);
+                    BLog.Log($"{this}: Maintaining focus on {playerObj.Input.playerIndex}", LogSettings, 4);
                     return;
                 } else {
-                    BLog.Log($"{this}: Removing focus from {focusedPlayer.Input.playerIndex} and placing it on {playerObj.Input.playerIndex}", logSettings, 4);
+                    BLog.Log($"{this}: Removing focus from {focusedPlayer.Input.playerIndex} and placing it on {playerObj.Input.playerIndex}", LogSettings, 4);
                     RemoveFocus();
                 }
             } else {
-                BLog.Log($"{this}: No focus existing, placing focus on {playerObj.Input.playerIndex}", logSettings, 4);
+                BLog.Log($"{this}: No focus existing, placing focus on {playerObj.Input.playerIndex}", LogSettings, 4);
             }
 
             /* Assign focus */
@@ -227,7 +245,7 @@ namespace EMullen.MenuController
                 return;
                 
             if(context.action.name != "Point")
-                BLog.Log($"MenuController \"{this}\" (focus: \"{(focusedPlayer != null ? focusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", logSettings, 5);
+                BLog.Log($"MenuController \"{this}\" (focus: \"{(focusedPlayer != null ? focusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", LogSettings, 5);
             if(context.performed && context.action.name == MenuControllerSettings.Instance.CancelAction.name) {
                 SendMenuBack();
             }
@@ -277,7 +295,7 @@ namespace EMullen.MenuController
             if(EventSystem != null)
                 EventSystem.SetSelectedGameObject(null);
 
-            BLog.Log($"MenuController \"{this}\" opened with {(focusedPlayer != null ? $"focus \"{focusedPlayer.Input.playerIndex}\"" : "no focus")}", logSettings, 0);
+            BLog.Log($"MenuController \"{this}\" opened with {(focusedPlayer != null ? $"focus \"{focusedPlayer.Input.playerIndex}\"" : "no focus")}", LogSettings, 0);
             Opened();
         }
 
@@ -289,7 +307,7 @@ namespace EMullen.MenuController
         public void Close() 
         {
             Closed();
-            BLog.Log($"MenuController \"{this}\" closed", logSettings, 2);
+            BLog.Log($"MenuController \"{this}\" closed", LogSettings, 2);
             RemoveFocus();
         
             if(openCloseType == OpenCloseType.GAME_OBJECT_ENABLE_DISABLE)
@@ -342,7 +360,7 @@ namespace EMullen.MenuController
                 });
             }
 
-            BLog.Log($"Menu \"{this}\" opening submenu \"{id}\"", logSettings, 1);
+            BLog.Log($"Menu \"{this}\" opening submenu \"{id}\"", LogSettings, 1);
             subMenu.Open(focus);
         }
     #endregion

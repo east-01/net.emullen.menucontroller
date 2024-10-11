@@ -1,6 +1,8 @@
 using EMullen.Core;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
 namespace EMullen.MenuController 
 {
@@ -12,12 +14,18 @@ namespace EMullen.MenuController
 
         public static MenuControllerSettings Instance { get; private set;}
 
+        [Header("Global objects")]
         [SerializeField]
-        private BLogChannel logSettings;
+        private EventSystem eventSystem;
+        public EventSystem EventSystem => eventSystem;
+        [SerializeField]
+        private InputSystemUIInputModule inputSystemUIInputModule;
+        public InputSystemUIInputModule InputSystemUIInputModule => inputSystemUIInputModule;
 
+        [Header("Settings")]
         [SerializeField]
-        private InputAction cancelAction;
-        public InputAction CancelAction => cancelAction;
+        private InputActionReference cancelAction;
+        public InputActionReference CancelAction => cancelAction;
 
         private void Awake() 
         {
