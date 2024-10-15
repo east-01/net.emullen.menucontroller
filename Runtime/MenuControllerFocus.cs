@@ -43,18 +43,19 @@ namespace EMullen.MenuController
             /* Passing focus */
             if(FocusedPlayer != null) {
                 if(FocusedPlayer.UID == playerObj.UID) {
-                    BLog.Log($"{this}: Maintaining focus on {playerObj.Input.playerIndex}", LogSettings, 4);
+                    BLog.Log($"{gameObject.name}: Maintaining focus on {playerObj.Input.playerIndex}", LogSettings, 4);
                     return;
                 } else {
-                    BLog.Log($"{this}: Removing focus from {FocusedPlayer.Input.playerIndex} and placing it on {playerObj.Input.playerIndex}", LogSettings, 4);
+                    BLog.Log($"{gameObject.name}: Removing focus from {FocusedPlayer.Input.playerIndex} and placing it on {playerObj.Input.playerIndex}", LogSettings, 4);
                     RemoveFocus();
                 }
             } else {
-                BLog.Log($"{this}: No focus existing, placing focus on {playerObj.Input.playerIndex}", LogSettings, 4);
+                BLog.Log($"{gameObject.name}: No focus existing, placing focus on {playerObj.Input.playerIndex}", LogSettings, 4);
             }
 
             /* Assign focus */
             FocusedPlayer = playerObj;
+
             FocusedPlayer.Input.onActionTriggered += PlayerInput_ActionTriggered;
             FocusedPlayer.Input.onControlsChanged += PlayerInput_OnControlsChanged;
 
@@ -105,8 +106,48 @@ namespace EMullen.MenuController
             // BLog.Highlight($"##### REMOVED FOCUS FOR PLAYER {focusedPlayer.PlayerIndex} #####");
 
             FocusedPlayer.Input.onActionTriggered -= PlayerInput_ActionTriggered;
+            FocusedPlayer.Input.onControlsChanged -= PlayerInput_OnControlsChanged;
+
             FocusedPlayer = null;
             focusedPlayerInitialActionMap = null;
         }
+
+        private void PlayerManager_LocalPlayerJoined(LocalPlayer obj) 
+        {
+            if(IsOpen && obj.Input.playerIndex == 0 && autoFocusOnPlayerOne && FocusedPlayer == null)
+                SetFocus(obj);
+        }
+
+        private List<string> blacklistedActionNames = new() {"Point", "ScrollWheel", "Look"};
+        /// <summary>
+        /// Input events from the currently focused player.
+        /// </summary>
+        protected void PlayerInput_ActionTriggered(InputAction.CallbackContext context) 
+        {
+            if(!allowInputEvents)
+                return;
+                
+            if(!blacklistedActionNames.Contains(context.action.name)) {
+                BLog.Log($"MenuController \"{gameObject.name}\" (focus: \"{(FocusedPlayer != null ? FocusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", LogSettings, 5);
+            }
+
+            if(context.performed && context.action.name == MenuControllerSettings.Instance.CancelAction.action.name) {
+                SendMenuBack();
+            }
+
+            Child_PlayerInput_ActionTriggered(context);
+        }
+
+        private void PlayerInput_OnControlsChanged(PlayerInput input)
+        {
+            
+        }
+
+        /// <summary>
+        /// More Input Action events called from the MenuController class so that children can recieve them.
+        /// i.e. If you have a PlayerSelect MenuController and you want to recieve input action events, you'll
+        ///   override this method to get those events instead of subscribing to the playerInput directly.
+        /// </summary>
+        protected virtual void Child_PlayerInput_ActionTriggered(InputAction.CallbackContext context) {}
     }
 }

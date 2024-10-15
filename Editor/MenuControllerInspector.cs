@@ -82,9 +82,10 @@ namespace EMullen.MenuController.Editor
 
         private void DrawSettings() 
         {
+            EditorGUILayout.PropertyField(sp_autoOpen, new GUIContent("Open on start"));
+            CustomEditorUtils.CreateNote("MenuControllers close by default.");
             EditorGUILayout.PropertyField(sp_hidesParent, new GUIContent("Hides parent"));
             EditorGUILayout.PropertyField(sp_hidesSiblings, new GUIContent("Hides siblings"));
-            EditorGUILayout.PropertyField(sp_autoOpen, new GUIContent("Auto-open"));
         }
 
         private void DrawFocusedPlayer() 

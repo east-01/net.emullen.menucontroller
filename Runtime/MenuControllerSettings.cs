@@ -1,4 +1,5 @@
 using EMullen.Core;
+using EMullen.PlayerMgmt;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -27,6 +28,8 @@ namespace EMullen.MenuController
         private InputActionReference cancelAction;
         public InputActionReference CancelAction => cancelAction;
 
+        private bool hasCheckedPlayerConfiguration = false;
+
         private void Awake() 
         {
             if(Instance != null) {
@@ -37,6 +40,16 @@ namespace EMullen.MenuController
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+        }
+
+        private void Update() 
+        {
+            if(!hasCheckedPlayerConfiguration && PlayerManager.Instance != null) {
+                if(PlayerManager.Instance.PlayerInputManager.playerPrefab.GetComponent<PlayerInput>().notificationBehavior != PlayerNotifications.InvokeCSharpEvents)
+                    Debug.LogWarning($"<color=#FF3333><b>SEVERE warning for PlayerInputManager on the PlayerManager:</b></color> playerPrefab's PlayerInput#notificationBehaviour is NOT \"Invoke C# Events\" this WILL cause problems for MenuControllers.");
+
+                hasCheckedPlayerConfiguration = true;
+            }
         }
     }
 }

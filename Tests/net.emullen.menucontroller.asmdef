@@ -9,7 +9,8 @@
         "FishNet.Runtime",
         "PlayerMgmt",
         "Core",
-        "MenuController"
+        "MenuController",
+        "Bootstrapper"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

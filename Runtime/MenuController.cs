@@ -59,14 +59,17 @@ namespace EMullen.MenuController
         [SerializeField]
         protected List<ToolTip> tooltips;
 
-        protected CanvasGroup canvasGroup;
+        private CanvasGroup _canvasGroup;
+        protected CanvasGroup canvasGroup { get {
+            if(!TryGetComponent(out _canvasGroup))
+                _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            return _canvasGroup;
+        } }
         protected bool allowInputEvents = true;
         private bool menuControllerLoadedProperly = false;
 
         protected void Awake() 
         {
-            canvasGroup = GetComponent<CanvasGroup>();
-
             InitializeSubMenus();
 
             menuControllerLoadedProperly = true;
@@ -100,11 +103,16 @@ namespace EMullen.MenuController
 
         protected void LateUpdate() 
         {
-            if(FocusedPlayer == null && autoFocusOnPlayerOne && PlayerManager.Instance != null && PlayerManager.Instance.LocalPlayers[0] != null)
+            if(IsOpen && 
+            FocusedPlayer == null && 
+            autoFocusOnPlayerOne && 
+            PlayerManager.Instance != null && 
+            PlayerManager.Instance.LocalPlayers != null &&
+            PlayerManager.Instance.LocalPlayers[0] != null)
                 SetFocus(PlayerManager.Instance.LocalPlayers[0]);
 
             if(EventSystem.currentSelectedGameObject != null) {
-                if(!ShouldSelect)
+                if(!ShouldSelect && EventSystem.currentSelectedGameObject.GetComponent<Selectable>() is Button)
                     EventSystem.SetSelectedGameObject(null);
             } else {
                 if(ShouldSelect && firstSelect != null)
@@ -114,43 +122,6 @@ namespace EMullen.MenuController
             if(!menuControllerLoadedProperly)
                 Debug.LogError($"MenuController script \"{this}\" on \"{gameObject.name}\" wasn't loaded properly. Make sure you call base.Awake() if you're overriding it.");
         }
-
-#region Events
-        private void PlayerManager_LocalPlayerJoined(LocalPlayer obj) 
-        {
-            if(IsOpen && obj.Input.playerIndex == 0 && autoFocusOnPlayerOne && FocusedPlayer == null)
-                SetFocus(obj);
-        }
-
-        /// <summary>
-        /// Input events from the currently focused player.
-        /// </summary>
-        protected void PlayerInput_ActionTriggered(InputAction.CallbackContext context) 
-        {
-            if(!allowInputEvents)
-                return;
-                
-            if(context.action.name != "Point")
-                BLog.Log($"MenuController \"{this}\" (focus: \"{(FocusedPlayer != null ? FocusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", LogSettings, 5);
-            if(context.performed && context.action.name == MenuControllerSettings.Instance.CancelAction.name) {
-                SendMenuBack();
-            }
-
-            Child_PlayerInput_ActionTriggered(context);
-        }
-
-        private void PlayerInput_OnControlsChanged(PlayerInput input)
-        {
-            
-        }
-
-        /// <summary>
-        /// More Input Action events called from the MenuController class so that children can recieve them.
-        /// i.e. If you have a PlayerSelect MenuController and you want to recieve input action events, you'll
-        ///   override this method to get those events instead of subscribing to the playerInput directly.
-        /// </summary>
-        protected virtual void Child_PlayerInput_ActionTriggered(InputAction.CallbackContext context) {}
-#endregion
 
 #region Open and Close
         public void Open(LocalPlayer focus = null) 
@@ -162,8 +133,7 @@ namespace EMullen.MenuController
                     ParentMenu.RemoveFocus();
 
                 if(hidesSiblings) {
-                    ParentMenu.subMenus.ForEach(smd => {
-                        MenuController sm = GetSubMenu(smd.id);
+                    ParentMenu.SubMenus.ForEach(sm => {
                         if(sm.IsOpen)
                             sm.Close();
                     });

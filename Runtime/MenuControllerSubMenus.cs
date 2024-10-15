@@ -19,7 +19,7 @@ namespace EMullen.MenuController
 
         [SerializeField]
         protected List<SubMenuData> subMenus;
-        public List<MenuController> SubMenus => subMenus.Select(smStr => GetSubMenu(smStr.id)).ToList();
+        public List<MenuController> SubMenus => subMenus.Select(smd => GetSubMenu(smd.id)).ToList();
         public bool IsSubMenuOpen => SubMenus.Any(sm => sm.IsOpen);
 
         /// <summary>
@@ -99,11 +99,11 @@ namespace EMullen.MenuController
         /// </summary>
         public virtual void SendMenuBack() 
         {
-            BLog.Highlight("Default sendmenuback implementation");
-            Close();
+            if(ParentMenu == null)
+                return;
 
-            if(ParentMenu != null)
-                ParentMenu.Open();
+            Close();
+            ParentMenu.Open();
         }
 
         /// <summary>
