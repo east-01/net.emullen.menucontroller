@@ -1,11 +1,15 @@
 {
-    "name": "MenuController.Editor",
-    "rootNamespace": "EMullen.MenuController.Editor",
+    "name": "MenuController.Tests",
+    "rootNamespace": "EMullen.MenuController.Tests",
     "references": [
-        "MenuController",
-        "Core",
+        "UnityEditor",
+        "UnityEditor.Build",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro",
+        "FishNet.Runtime",
         "PlayerMgmt",
-        "Unity.InputSystem"
+        "Core",
+        "MenuController"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
