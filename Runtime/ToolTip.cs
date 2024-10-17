@@ -25,6 +25,11 @@ public class ToolTip : MonoBehaviour
         childImage = GetComponentInChildren<Image>();
         if(childImage == null) 
             throw new InvalidOperationException("Failed to find child image.");
+        
+        if(img == null) {
+            Debug.LogError($"Tooltip on gameObject \"{gameObject.name}\" doesn't have an image.");
+            return;
+        }
     }
 
     /* Yeah, this isn't really efficient. It would be better to do with OnControlsChanged event but led
@@ -32,6 +37,7 @@ public class ToolTip : MonoBehaviour
     void Update() 
     {
         if(observedInput == null || observedInput.devices.Count == 0) return;
+        if(img == null) return;
 
         childImage.sprite = observedInput.devices[0] is Gamepad ? gamepadImage : keyboardMouseImage;
 

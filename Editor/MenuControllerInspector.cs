@@ -22,7 +22,7 @@ namespace EMullen.MenuController.Editor
 
         private SerializedProperty sp_hidesParent;
         private SerializedProperty sp_hidesSiblings;
-        private SerializedProperty sp_autoOpen;
+        private SerializedProperty sp_startBehaviour;
 
         private SerializedProperty sp_autoFocusOnPlayerOne;
 
@@ -37,7 +37,7 @@ namespace EMullen.MenuController.Editor
         {
             sp_hidesParent = serializedObject.FindProperty("hidesParent");
             sp_hidesSiblings = serializedObject.FindProperty("hidesSiblings");
-            sp_autoOpen = serializedObject.FindProperty("autoOpen");
+            sp_startBehaviour = serializedObject.FindProperty("startBehaviour");
 
             sp_autoFocusOnPlayerOne = serializedObject.FindProperty("autoFocusOnPlayerOne");
 
@@ -82,7 +82,7 @@ namespace EMullen.MenuController.Editor
 
         private void DrawSettings() 
         {
-            EditorGUILayout.PropertyField(sp_autoOpen, new GUIContent("Open on start"));
+            EditorGUILayout.PropertyField(sp_startBehaviour, new GUIContent("Start behaviour"));
             CustomEditorUtils.CreateNote("MenuControllers close by default.");
             EditorGUILayout.PropertyField(sp_hidesParent, new GUIContent("Hides parent"));
             EditorGUILayout.PropertyField(sp_hidesSiblings, new GUIContent("Hides siblings"));
@@ -121,7 +121,7 @@ namespace EMullen.MenuController.Editor
     
             EditorGUILayout.PropertyField(sp_inputSystemUIInputModule, new GUIContent("InputSystemUIInputModule"));
             string usedISUIM = (target as MenuController).usedISUIM;
-            if(usedISUIM.Length > 0)
+            if(usedISUIM != null && usedISUIM.Length > 0)
                 GUILayout.Label($"Using: {usedISUIM}");
     
             EditorGUILayout.EndHorizontal();

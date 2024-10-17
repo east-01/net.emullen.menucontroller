@@ -24,7 +24,7 @@ namespace EMullen.MenuController
                 logSettings = ScriptableObject.CreateInstance<BLogChannel>();
                 logSettings.color = new Color(0.125f, 0.5f, 0.777f);
                 logSettings.enable = true;
-                logSettings.verbosity = 5;
+                logSettings.verbosity = 4;
                 logSettings.logName = "MenuCont";
             }
             return logSettings;
@@ -54,7 +54,7 @@ namespace EMullen.MenuController
         /// If this field is set to true we will call Open for this instance on Start
         /// </summary>
         [SerializeField]
-        private bool autoOpen = false;
+        private MenuStartBehaviour startBehaviour = MenuStartBehaviour.CLOSED;
 
         [SerializeField]
         protected List<ToolTip> tooltips;
@@ -95,9 +95,9 @@ namespace EMullen.MenuController
 
         protected void Start() 
         {
-            if(autoOpen)
+            if(startBehaviour == MenuStartBehaviour.OPEN)
                 Open();
-            else
+            else if(startBehaviour == MenuStartBehaviour.CLOSED)
                 Close();
         }
 
@@ -194,4 +194,6 @@ namespace EMullen.MenuController
         public string id;
         public MenuController menuController;   
     }
+
+    public enum MenuStartBehaviour { CLOSED, OPEN, NONE }
 }

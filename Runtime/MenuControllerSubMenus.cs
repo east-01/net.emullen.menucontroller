@@ -15,7 +15,7 @@ namespace EMullen.MenuController
 {
     public partial class MenuController : MonoBehaviour 
     {
-        public MenuController ParentMenu { get; private set; }
+        public MenuController ParentMenu { get; set; }
 
         [SerializeField]
         protected List<SubMenuData> subMenus;
@@ -131,7 +131,8 @@ namespace EMullen.MenuController
                 MenuController subMenu = smd.menuController;
 
                 subMenu.ParentMenu = this;
-                subMenu.Close();
+                // if(!subMenu.autoOpen)
+                //     subMenu.Close();
             }
         }
     }

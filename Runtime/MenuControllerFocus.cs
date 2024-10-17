@@ -82,7 +82,12 @@ namespace EMullen.MenuController
             // BLog.Highlight($"Action map: {focusedPlayer.Input.currentActionMap.name} prev AM: {focusedPlayerInitialActionMap}");
             // BLog.Highlight($"Actions asset: {InputSystemUIInputModule.actionsAsset.actionMaps}");
 
-            tooltips.ForEach(tt => tt.SetObservedInput(FocusedPlayer.Input));
+            tooltips.ForEach(tt => {
+                if(tt != null)
+                    tt.SetObservedInput(FocusedPlayer.Input);
+                else
+                    Debug.LogWarning($"Tooltip on MenuController \"{gameObject.name}\" is null");
+            });
 
             if(ShouldSelect && firstSelect != null) {
                 if(EventSystem != null) {
