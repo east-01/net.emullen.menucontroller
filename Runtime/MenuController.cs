@@ -39,6 +39,8 @@ namespace EMullen.MenuController
         public bool ShouldSelect { get {
             if(FocusedPlayer == null)
                 return true;
+            if(FocusedPlayer.Input.currentControlScheme == null)
+                return true;
             string currentControlScheme = FocusedPlayer.Input.currentControlScheme.ToLower();
             return !currentControlScheme.Contains("mouse");
         } }

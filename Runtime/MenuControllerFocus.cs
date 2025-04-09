@@ -58,12 +58,14 @@ namespace EMullen.MenuController
             FocusedPlayer.Input.onActionTriggered += PlayerInput_ActionTriggered;
             FocusedPlayer.Input.onControlsChanged += PlayerInput_OnControlsChanged;
 
-            focusedPlayerInitialActionMap = FocusedPlayer.Input.currentActionMap.name;
+            if(FocusedPlayer.Input.currentActionMap != null) {
+                focusedPlayerInitialActionMap = FocusedPlayer.Input.currentActionMap.name;
 
-            // The key is that the player should never be assigned to a InputSystemUIInputModule when they're not in ui action map
-            if(FocusedPlayer.Input.currentActionMap.name != "UI")
-                FocusedPlayer.Input.SwitchCurrentActionMap("UI");
-            
+                // The key is that the player should never be assigned to a InputSystemUIInputModule when they're not in ui action map
+                if(FocusedPlayer.Input.currentActionMap.name != "UI")
+                    FocusedPlayer.Input.SwitchCurrentActionMap("UI");
+            }
+
             FocusedPlayer.Input.uiInputModule = InputSystemUIInputModule;
             /* REVIEW: We have to use default actions here. (fuck new input system for real, if you're going to make something as convolouted as possible why wouldn't you print warnings for stuff like this.)
             The problem: Whenever we try to change focus the InputSystemUIInputModule
