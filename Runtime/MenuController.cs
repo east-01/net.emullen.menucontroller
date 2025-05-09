@@ -29,7 +29,11 @@ namespace EMullen.MenuController
             return logSettings;
         } }
 
-        public bool IsOpen => canvasGroup.interactable && canvasGroup.alpha == 1;  
+        /// <summary>
+        /// Is the MenuController open. Updated each frame in LateUpdate() so only one
+        ///   MenuController can have IsOpen as true each frame.
+        /// </summary>
+        public bool IsOpen { get; private set; }
 
         [SerializeField]
         protected Selectable firstSelect;
@@ -104,6 +108,8 @@ namespace EMullen.MenuController
 
         protected void LateUpdate() 
         {
+            IsOpen = canvasGroup.interactable && canvasGroup.alpha == 1;  
+
             if(IsOpen && 
             FocusedPlayer == null && 
             autoFocusOnPlayerOne && 
@@ -134,10 +140,10 @@ namespace EMullen.MenuController
                     ParentMenu.RemoveFocus();
 
                 if(hidesSiblings) {
-                    ParentMenu.SubMenus.ForEach(sm => {
+                    ParentMenu.SubMenus.ForEach((Action<MenuController>)(sm => {
                         if(sm.IsOpen)
                             sm.Close();
-                    });
+                    }));
                 }
             }
 

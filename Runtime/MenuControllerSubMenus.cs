@@ -19,7 +19,7 @@ namespace EMullen.MenuController
         [SerializeField]
         protected List<SubMenuData> subMenus;
         public List<MenuController> SubMenus => subMenus.Select(smd => GetSubMenu(smd.id)).ToList();
-        public bool IsSubMenuOpen => SubMenus.Any(sm => sm.IsOpen);
+        public bool IsSubMenuOpen => SubMenus.Any((Func<MenuController, bool>)(sm => (bool)sm.IsOpen));
 
         /// <summary>
         /// Cache the submenus by ID for easy reference with GetSubMenu
