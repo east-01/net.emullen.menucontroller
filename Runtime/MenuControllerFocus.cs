@@ -133,9 +133,12 @@ namespace EMullen.MenuController
             if(!allowInputEvents)
                 return;
                 
-            if(!blacklistedActionNames.Contains(context.action.name)) {
-                BLog.Log($"MenuController \"{gameObject.name}\" (focus: \"{(FocusedPlayer != null ? FocusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", LogSettings, 5);
-            }
+            // if(!blacklistedActionNames.Contains(context.action.name)) {
+            //     BLog.Log($"MenuController \"{gameObject.name}\" (focus: \"{(FocusedPlayer != null ? FocusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", LogSettings, 5);
+            // }
+
+            if(MenuControllerSettings.Instance.CancelAction == null)
+                return;
 
             if(context.performed && context.action.name == MenuControllerSettings.Instance.CancelAction.action.name) {
                 SendMenuBack();
