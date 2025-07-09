@@ -9,6 +9,7 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using EMullen.PlayerMgmt;
 using EMullen.Core;
+using System.Drawing;
 
 namespace EMullen.MenuController 
 {
@@ -55,33 +56,53 @@ namespace EMullen.MenuController
             /* Assign focus */
             FocusedPlayer = playerObj;
 
-            FocusedPlayer.Input.onActionTriggered += PlayerInput_ActionTriggered;
-            FocusedPlayer.Input.onControlsChanged += PlayerInput_OnControlsChanged;
+            // InputSystemUIInputModule.actionsAsset = FocusedPlayer.Input.actions;
+
+            // FocusedPlayer.Input.uiInputModule = InputSystemUIInputModule;
+
+            // InputSystemUIInputModule.actionsAsset = FocusedPlayer.Input.actions;
+
+            // 3. Wire up each individual action reference by path.
+            //    Make sure your UI action map has actions named exactly: 
+            //    "Point", "Click", "Submit", "Cancel", "Navigate" (or "Move"), "ScrollWheel", etc.
+            // InputActionReference refer = InputActionReference.Create(FocusedPlayer.Input.actions["UI/Point"]);
+            // refer.name = "Point";
+            // BLog.Highlight($"refer \"{refer}\"");
+            // InputSystemUIInputModule.point = refer;
+            // InputSystemUIInputModule.leftClick = InputActionReference.Create(FocusedPlayer.Input.actions["UI/Click"]);
+            // InputSystemUIInputModule.submit = InputActionReference.Create(FocusedPlayer.Input.actions["UI/Submit"]);
+            // InputSystemUIInputModule.cancel = InputActionReference.Create(FocusedPlayer.Input.actions["UI/Cancel"]);
+            // InputSystemUIInputModule.move = InputActionReference.Create(FocusedPlayer.Input.actions["UI/Navigate"]);
+            // InputSystemUIInputModule.scrollWheel  = InputActionReference.Create(FocusedPlayer.Input.actions["UI/ScrollWheel"]);
+                          
+            // /* REVIEW: We have to use default actions here. (fuck new input system for real, if you're going to make something as convolouted as possible why wouldn't you print warnings for stuff like this.)
+            // The problem: Whenever we try to change focus the InputSystemUIInputModule
+            // decides to lose all its bindings to the UI input actions and the reference
+            // to the PlayerControls file gets messed up.
+            // There are no warning messages why this happens and why it happens isn't clear.
+            // If we can somehow maintain our bindings when switching focus then the problem
+            // will be fixed.
+            // */
+            // InputSystemUIInputModule.AssignDefaultActions();
 
             if(FocusedPlayer.Input.currentActionMap != null) {
-                focusedPlayerInitialActionMap = FocusedPlayer.Input.currentActionMap.name;
+                // focusedPlayerInitialActionMap = FocusedPlayer.Input.currentActionMap.name;
 
-                // The key is that the player should never be assigned to a InputSystemUIInputModule when they're not in ui action map
-                if(FocusedPlayer.Input.currentActionMap.name != "UI")
-                    FocusedPlayer.Input.SwitchCurrentActionMap("UI");
+                // // The key is that the player should never be assigned to a InputSystemUIInputModule when they're not in ui action map
+                // if(FocusedPlayer.Input.currentActionMap.name != "UI")
+                //     FocusedPlayer.Input.SwitchCurrentActionMap("UI");
             }
 
-            FocusedPlayer.Input.uiInputModule = InputSystemUIInputModule;
-            /* REVIEW: We have to use default actions here. (fuck new input system for real, if you're going to make something as convolouted as possible why wouldn't you print warnings for stuff like this.)
-            The problem: Whenever we try to change focus the InputSystemUIInputModule
-            decides to lose all its bindings to the UI input actions and the reference
-            to the PlayerControls file gets messed up.
-            There are no warning messages why this happens and why it happens isn't clear.
-            If we can somehow maintain our bindings when switching focus then the problem
-            will be fixed.
-            */
-            InputSystemUIInputModule.AssignDefaultActions();
+            // this.EventSystem.UpdateModules();
 
-            // BLog.Highlight($"##### SETTING FOCUS FOR PLAYER {focusedPlayer.PlayerIndex} on {this.GetType()} #####");
-            // BLog.Highlight($"UIInModule: {InputSystemUIInputModule.GetInstanceID()} EventSystem: {EventSystem.GetInstanceID()}");
-            // BLog.Highlight($"Used: {usedISUIM}");
-            // BLog.Highlight($"Action map: {focusedPlayer.Input.currentActionMap.name} prev AM: {focusedPlayerInitialActionMap}");
-            // BLog.Highlight($"Actions asset: {InputSystemUIInputModule.actionsAsset.actionMaps}");
+            BLog.Highlight($"##### SETTING FOCUS FOR PLAYER {FocusedPlayer.Input.playerIndex} on {this.GetType()} #####");
+            BLog.Highlight($"UIInModule: {InputSystemUIInputModule.GetInstanceID()} EventSystem: {EventSystem.GetInstanceID()}");
+            BLog.Highlight($"Used: {usedISUIM}");
+            BLog.Highlight($"Action map: {FocusedPlayer.Input.currentActionMap.name} prev AM: {focusedPlayerInitialActionMap}");
+            BLog.Highlight($"Actions asset: {InputSystemUIInputModule.actionsAsset.actionMaps}");
+
+            FocusedPlayer.Input.onActionTriggered += PlayerInput_ActionTriggered;
+            FocusedPlayer.Input.onControlsChanged += PlayerInput_OnControlsChanged;
 
             tooltips.ForEach(tt => {
                 if(tt != null)
@@ -105,11 +126,12 @@ namespace EMullen.MenuController
 
             if(FocusedPlayer.Input != null) {
                 FocusedPlayer.Input.uiInputModule = null;
-                if(FocusedPlayer.Input.enabled)
+                if(FocusedPlayer.Input.enabled && focusedPlayerInitialActionMap != null && FocusedPlayer.Input.actions.actionMaps.Select(iam => iam.name).Contains(focusedPlayerInitialActionMap)) {
                     FocusedPlayer.Input.SwitchCurrentActionMap(focusedPlayerInitialActionMap);
+                }
             }
 
-            // BLog.Highlight($"##### REMOVED FOCUS FOR PLAYER {focusedPlayer.PlayerIndex} #####");
+            BLog.Highlight($"##### REMOVED FOCUS FOR PLAYER {FocusedPlayer.Input.playerIndex} #####");
 
             FocusedPlayer.Input.onActionTriggered -= PlayerInput_ActionTriggered;
             FocusedPlayer.Input.onControlsChanged -= PlayerInput_OnControlsChanged;
@@ -124,7 +146,6 @@ namespace EMullen.MenuController
                 SetFocus(obj);
         }
 
-        private List<string> blacklistedActionNames = new() {"Point", "ScrollWheel", "Look"};
         /// <summary>
         /// Input events from the currently focused player.
         /// </summary>
