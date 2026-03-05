@@ -43,14 +43,14 @@ namespace EMullen.MenuController
             /* Passing focus */
             if(FocusedPlayer != null) {
                 if(FocusedPlayer.UID == playerObj.UID) {
-                    BLog.Log($"{gameObject.name}: Maintaining focus on {playerObj.Input.playerIndex}", LogSettings, 4);
+                    BLog.Log($"{gameObject.name}: Maintaining focus on {playerObj.Input.playerIndex}", "MenuController", 4);
                     return;
                 } else {
-                    BLog.Log($"{gameObject.name}: Removing focus from {FocusedPlayer.Input.playerIndex} and placing it on {playerObj.Input.playerIndex}", LogSettings, 4);
+                    BLog.Log($"{gameObject.name}: Removing focus from {FocusedPlayer.Input.playerIndex} and placing it on {playerObj.Input.playerIndex}", "MenuController", 4);
                     RemoveFocus();
                 }
             } else {
-                BLog.Log($"{gameObject.name}: No focus existing, placing focus on {playerObj.Input.playerIndex}", LogSettings, 4);
+                BLog.Log($"{gameObject.name}: No focus existing, placing focus on {playerObj.Input.playerIndex}", "MenuController", 4);
             }
 
             /* Assign focus */
@@ -155,7 +155,7 @@ namespace EMullen.MenuController
                 return;
                 
             // if(!blacklistedActionNames.Contains(context.action.name)) {
-            //     BLog.Log($"MenuController \"{gameObject.name}\" (focus: \"{(FocusedPlayer != null ? FocusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", LogSettings, 5);
+            //     BLog.Log($"MenuController \"{gameObject.name}\" (focus: \"{(FocusedPlayer != null ? FocusedPlayer.Input.playerIndex : "-")}\") recieved input event \"{context.action.name}\"", "MenuController", 5);
             // }
 
             if(MenuControllerSettings.Instance.CancelAction == null)

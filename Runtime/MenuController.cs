@@ -17,18 +17,6 @@ namespace EMullen.MenuController
     public partial class MenuController : MonoBehaviour
     {
 
-        private static BLogChannel logSettings;
-        public static BLogChannel LogSettings { get {
-            if(logSettings != null) {
-                logSettings = ScriptableObject.CreateInstance<BLogChannel>();
-                logSettings.color = new Color(0.125f, 0.5f, 0.777f);
-                logSettings.enable = true;
-                logSettings.verbosity = 4;
-                logSettings.logName = "MenuCont";
-            }
-            return logSettings;
-        } }
-
         /// <summary>
         /// Is the MenuController open. Updated each frame in LateUpdate() so only one
         ///   MenuController can have IsOpen as true each frame.
@@ -164,7 +152,7 @@ namespace EMullen.MenuController
             if(EventSystem != null)
                 EventSystem.SetSelectedGameObject(null);
 
-            BLog.Log($"MenuController \"{this}\" opened with {(FocusedPlayer != null ? $"focus \"{FocusedPlayer.Input.playerIndex}\"" : "no focus")}", LogSettings, 0);
+            BLog.Log($"MenuController \"{this}\" opened with {(FocusedPlayer != null ? $"focus \"{FocusedPlayer.Input.playerIndex}\"" : "no focus")}", "MenuController", 0);
             Opened();
         }
 
@@ -176,7 +164,7 @@ namespace EMullen.MenuController
         public void Close() 
         {
             Closed();
-            BLog.Log($"MenuController \"{this}\" closed", LogSettings, 2);
+            BLog.Log($"MenuController \"{this}\" closed", "MenuController", 2);
             RemoveFocus();
         
             canvasGroup.alpha = 0f;
